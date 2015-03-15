@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">BoxOfficeMovies</string>
+
+    <string name="empty_list">No movies</string>
+    <string name="action_settings">Settings</string>
+    <string name="tvTitle_value">The Dark Knight</string>
+    <string name="tvCast_value">Christian Bale, Joseph-Gordon Levitt, Heath Ledger, Maggie Gylenhall</string>
+    <string name="tvScore_value">91%</string>
+</resources>
