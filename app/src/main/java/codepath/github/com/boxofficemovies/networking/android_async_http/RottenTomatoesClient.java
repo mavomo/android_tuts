@@ -1,4 +1,4 @@
-package codepath.github.com.boxofficemovies.client;
+package codepath.github.com.boxofficemovies.networking.android_async_http;
 
 import android.util.Log;
 

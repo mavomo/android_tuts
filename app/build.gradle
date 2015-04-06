@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "codepath.github.com.boxofficemovies"
-        minSdkVersion 11
+        minSdkVersion 12
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -24,4 +24,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.squareup.picasso:picasso:2.4.0'
     compile 'com.loopj.android:android-async-http:1.4.6'
+    compile 'com.mcxiaoke.volley:library:1.0.+'
+    compile 'com.google.code.gson:gson:1.7.2'
+    compile 'org.apache.commons:commons-lang3:3.0'
 }

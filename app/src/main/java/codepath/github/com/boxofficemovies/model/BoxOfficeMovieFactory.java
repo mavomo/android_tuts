@@ -20,9 +20,9 @@ public class BoxOfficeMovieFactory {
      * @param jsonObject : remote object retrieved from server
      * @return an instance of @BoxOfficeMovie
      */
-    public static BoxOfficeMovie fromJson(JSONObject jsonObject){
-        BoxOfficeMovie boxOfficeMovie = new BoxOfficeMovie();
-        try{
+    public static BoxOffice fromJson(JSONObject jsonObject){
+        BoxOffice boxOfficeMovie = new BoxOffice();
+        /*try{
             boxOfficeMovie.setTitle(jsonObject.getString("title"));
             boxOfficeMovie.setYear(jsonObject.getInt("year"));
             boxOfficeMovie.setSynopsis(jsonObject.getString("synopsis"));
@@ -36,7 +36,7 @@ public class BoxOfficeMovieFactory {
             }
         }catch (JSONException e){
             e.printStackTrace();
-        }
+        }*/
         return boxOfficeMovie;
     }
 
@@ -44,7 +44,7 @@ public class BoxOfficeMovieFactory {
      *
      * @param jsonArray : remote JsonArray retrieved from the server
      * @return
-     */
+
     public static List<BoxOfficeMovie> fromJson(JSONArray jsonArray){
         List<BoxOfficeMovie> boxOfficeMovies = new ArrayList<>();
 
@@ -63,5 +63,5 @@ public class BoxOfficeMovieFactory {
 
         return boxOfficeMovies;
     }
-
+    */
 }

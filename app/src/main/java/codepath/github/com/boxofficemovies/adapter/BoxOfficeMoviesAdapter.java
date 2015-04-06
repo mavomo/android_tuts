@@ -5,34 +5,49 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.BaseAdapter;
+
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.NetworkImageView;
 
-import java.util.ArrayList;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 
 import codepath.github.com.boxofficemovies.R;
-import codepath.github.com.boxofficemovies.model.BoxOfficeMovie;
+import codepath.github.com.boxofficemovies.model.AbrigedCast;
+import codepath.github.com.boxofficemovies.model.BoxOffice;
+import codepath.github.com.boxofficemovies.model.Movie;
+import codepath.github.com.boxofficemovies.networking.volley.BoxOfficeMoviesApi;
+
 
 /**
  * Created by Michelle on 14/03/2015.
  */
-public class BoxOfficeMoviesAdapter extends ArrayAdapter<BoxOfficeMovie> {
-    private List<BoxOfficeMovie> movies;
+public class BoxOfficeMoviesAdapter extends BaseAdapter implements Response.Listener<BoxOffice>, Response.ErrorListener {
+
     private final String TAG = "BoxOfficeMoviesAdapter";
+
+    private Context mContext;
+
+    private List<Movie> movies;
+
+    private BoxOfficeMoviesApi boxOfficeMoviesApi;
+    private final String URL_MOVIES = "lists/movies/box_office.json";
     /**
      * Constructor
      *
      * @param context  The current context.
-     * @param movies  The movies to represent in the ListView.
      */
-    public BoxOfficeMoviesAdapter(Context context, List<BoxOfficeMovie> movies) {
-        super(context,R.layout.item_box_office_movie, movies);
-        this.movies = movies;
+    public BoxOfficeMoviesAdapter(Context context,List<Movie> boxOfficeMovies) {
+        this.mContext = context;
+        this.movies = boxOfficeMovies;
+        boxOfficeMoviesApi = new BoxOfficeMoviesApi(context);
+        fetchData(URL_MOVIES);
     }
 
     /**
@@ -46,16 +61,14 @@ public class BoxOfficeMoviesAdapter extends ArrayAdapter<BoxOfficeMovie> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
         Log.i(TAG, " entering getView method");
-
         ViewHolder viewHolder;
-
         if(convertView == null){
-            LayoutInflater inflater = LayoutInflater.from(getContext());
+            LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(R.layout.item_box_office_movie, parent,false);
 
             //initialize the view holder
             viewHolder = new ViewHolder();
-            viewHolder.ivPosterImage = (ImageView) convertView.findViewById(R.id.ivPosterImage);
+            //viewHolder.ivPosterImage = (NetworkImageView) convertView.findViewById(R.id.ivPosterImage);
             viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
             viewHolder.tvCast = (TextView) convertView.findViewById(R.id.tvCast);
             viewHolder.tvCriticsScore = (TextView) convertView.findViewById(R.id.tvCriticsScore);
@@ -63,15 +76,25 @@ public class BoxOfficeMoviesAdapter extends ArrayAdapter<BoxOfficeMovie> {
         }else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        BoxOfficeMovie movie = getItem(position);
+
+
+        Movie movie = getItem(position);
 
         //Lookup views within item layout
-        viewHolder.tvTitle.setText(movie.getTitle());
-        viewHolder.tvCriticsScore.setText("" + movie.getCriticScore() + "%");
-        viewHolder.tvCast.setText(" "+ movie.getCastList());
-        Picasso.with(getContext()).load(movie.getPosterUrl()).into(viewHolder.ivPosterImage);
+        String title = movie.getTitle();
+        String criticScore = movie.getRatings().getCriticsScore();
+        List<AbrigedCast> actors = movie.getCasting();
 
+        viewHolder.tvTitle.setText(title);
+        viewHolder.tvCriticsScore.setText("" + criticScore + "%");
+        viewHolder.tvCast.setText(" " + StringUtils.join(actors, ','));
+      //  Picasso.with(getContext()).load(movie.getPosterUrl()).into(viewHolder.ivPosterImage);
         return convertView;
+    }
+
+    public void fetchData (String url){
+        Log.i(TAG, " fetching data");
+        boxOfficeMoviesApi.requestMovies(URL_MOVIES, this, this);
     }
 
     @Override
@@ -80,7 +103,7 @@ public class BoxOfficeMoviesAdapter extends ArrayAdapter<BoxOfficeMovie> {
     }
 
     @Override
-    public BoxOfficeMovie getItem(int position) {
+    public Movie getItem(int position) {
         return movies.get(position);
     }
 
@@ -89,12 +112,24 @@ public class BoxOfficeMoviesAdapter extends ArrayAdapter<BoxOfficeMovie> {
         return position;
     }
 
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        VolleyLog.e(error, "Unable to load box office movie");
+    }
+
+    @Override
+    public void onResponse(BoxOffice movieInstance) {
+        movies.addAll(movieInstance.getMovies());
+        notifyDataSetChanged();
+
+    }
+
     static class ViewHolder {
         TextView tvTitle;
         TextView tvCriticsScore;
         TextView tvCast;
-        ImageView ivPosterImage;
-        int position;
+        NetworkImageView ivPosterImage;
     }
 
 
