@@ -23,7 +23,6 @@ public class BoxOfficeMovieRequest <T> extends Request<T> {
 
     private final String TAG = "BoxOfficeMovieRequest";
 
-
     private Response.Listener<T> _listener = null;
 
     private final Gson gson = new Gson();

@@ -1,6 +1,7 @@
 package codepath.github.com.boxofficemovies.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,8 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -28,13 +29,16 @@ import codepath.github.com.boxofficemovies.networking.volley.BoxOfficeMoviesApi;
 /**
  * Created by Michelle on 14/03/2015.
  */
-public class BoxOfficeMoviesAdapter extends BaseAdapter implements Response.Listener<BoxOffice>, Response.ErrorListener {
+public class BoxOfficeMoviesAdapter extends BaseAdapter implements Response.Listener<BoxOffice>,Response.ErrorListener {
 
     private final String TAG = "BoxOfficeMoviesAdapter";
 
     private Context mContext;
 
     private List<Movie> movies;
+    private NetworkImageView mNetworkImageView;
+    private ImageLoader mImageLoader;
+
 
     private BoxOfficeMoviesApi boxOfficeMoviesApi;
     private final String URL_MOVIES = "lists/movies/box_office.json";
@@ -47,6 +51,7 @@ public class BoxOfficeMoviesAdapter extends BaseAdapter implements Response.List
         this.mContext = context;
         this.movies = boxOfficeMovies;
         boxOfficeMoviesApi = new BoxOfficeMoviesApi(context);
+        mImageLoader = boxOfficeMoviesApi.getImageLoader();
         fetchData(URL_MOVIES);
     }
 
@@ -68,7 +73,7 @@ public class BoxOfficeMoviesAdapter extends BaseAdapter implements Response.List
 
             //initialize the view holder
             viewHolder = new ViewHolder();
-            //viewHolder.ivPosterImage = (NetworkImageView) convertView.findViewById(R.id.ivPosterImage);
+            viewHolder.ivPosterImage = (NetworkImageView) convertView.findViewById(R.id.ivPosterImage);
             viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
             viewHolder.tvCast = (TextView) convertView.findViewById(R.id.tvCast);
             viewHolder.tvCriticsScore = (TextView) convertView.findViewById(R.id.tvCriticsScore);
@@ -84,11 +89,14 @@ public class BoxOfficeMoviesAdapter extends BaseAdapter implements Response.List
         String title = movie.getTitle();
         String criticScore = movie.getRatings().getCriticsScore();
         List<AbrigedCast> actors = movie.getCasting();
+        String thumbnailUrl = movie.getPosters().getThumbmail();
 
         viewHolder.tvTitle.setText(title);
         viewHolder.tvCriticsScore.setText("" + criticScore + "%");
         viewHolder.tvCast.setText(" " + StringUtils.join(actors, ','));
-      //  Picasso.with(getContext()).load(movie.getPosterUrl()).into(viewHolder.ivPosterImage);
+        viewHolder.ivPosterImage.setImageUrl(thumbnailUrl, mImageLoader);
+
+
         return convertView;
     }
 

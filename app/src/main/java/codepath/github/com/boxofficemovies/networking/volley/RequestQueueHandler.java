@@ -1,6 +1,7 @@
 package codepath.github.com.boxofficemovies.networking.volley;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.android.volley.Request;
 import com.android.volley.Request;
@@ -18,6 +19,15 @@ public class RequestQueueHandler<T> {
     private final String TAG = "RequestQueueHandler";
     private RequestQueue requestQueue;
     private static Context _context;
+    private ImageLoader mImageLoader;
+
+    public ImageLoader getImageLoader() {
+        requestQueue = getRequestQueue();
+        if (mImageLoader == null) {
+            mImageLoader = new ImageLoader(this.requestQueue, new LruBitmapCache(_context));
+        }
+        return mImageLoader;
+    }
 
     //Singleton
     private static RequestQueueHandler instance;
@@ -43,5 +53,16 @@ public class RequestQueueHandler<T> {
 
     public <T> void addToRequestQueue(Request<T> request){
         getRequestQueue().add(request);
+    }
+
+    public void cancelPendingRequests(Object tag) {
+        if (requestQueue != null) {
+            requestQueue.cancelAll(tag);
+        }
+    }
+
+    public <T> void addToRequestQueue(Request<T> req, String tag) {
+        req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
+        getRequestQueue().add(req);
     }
 }

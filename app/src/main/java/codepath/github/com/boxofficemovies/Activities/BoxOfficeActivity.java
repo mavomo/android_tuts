@@ -32,7 +32,6 @@ public class BoxOfficeActivity extends ListActivity {
         boxOfficeInstance = new BoxOffice();
 
         boxOfficeMoviesAdapter = new BoxOfficeMoviesAdapter(this, boxOfficeInstance.getMovies());
-
         //FIXME : check if the device is using the WIFI.
         setListAdapter(boxOfficeMoviesAdapter);
     }
