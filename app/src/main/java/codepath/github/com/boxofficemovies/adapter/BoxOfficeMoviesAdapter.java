@@ -36,7 +36,6 @@ public class BoxOfficeMoviesAdapter extends BaseAdapter implements Response.List
     private Context mContext;
 
     private List<Movie> movies;
-    private NetworkImageView mNetworkImageView;
     private ImageLoader mImageLoader;
 
 
@@ -95,8 +94,6 @@ public class BoxOfficeMoviesAdapter extends BaseAdapter implements Response.List
         viewHolder.tvCriticsScore.setText("" + criticScore + "%");
         viewHolder.tvCast.setText(" " + StringUtils.join(actors, ','));
         viewHolder.ivPosterImage.setImageUrl(thumbnailUrl, mImageLoader);
-
-
         return convertView;
     }
 
